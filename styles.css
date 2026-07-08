@@ -1,0 +1,295 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-color: #EDE8D0;
+    --text-color: #1C1C1C;
+    /* --nav-bar-color: linear-gradient(#436488, #2e435c) */
+    --nav-bar-color: #EDE8D0;
+    --nav-text-color: #1C1C1C;
+}
+
+.dark-mode {
+    --bg-color: #1C1C1C;
+    --nav-bar-color: #D2C588;
+    --text-color: #ebe5e5;
+}
+
+body {
+    /* background-color: hsl(7, 85%, 99%); */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.2s;
+}
+
+h2 {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    margin: 0 14% 0%;
+    /* color: #ebe5e5; */
+}
+
+h3 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    color: rgb(111, 114, 117);
+    margin: 0 14% 0;
+}
+
+h4 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    color: rgb(111, 114, 117);
+    margin: 0 14% 0;
+}
+
+p {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0 14% 0;
+    /* color: #ebe5e5; */
+}
+
+table {
+    border: black solid 2px;
+    border-collapse: collapse;
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+td {
+    border: black solid 2px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+#site-title {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 30px;
+    /* color: #ebe5e5; */
+    text-align: center;
+    margin: 30px 0 10px;
+    /* transition: color 0.2s; */
+}
+
+#site-title a:link {
+    text-decoration: none;
+    color: var(--text-color);
+    transition: color 0.2s;
+}
+
+#site-title a:visited {
+    color: var(--text-color);
+}
+
+#site-title a:hover {
+    color: rgb(186, 48, 48);
+}
+
+#theme-toggle {
+    width: 70px;
+    /* height: 50px; */
+    padding: 0;
+    border: 0;
+    /* border-radius: 50%; */
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-self: stretch;
+    cursor: pointer;
+}
+
+#theme-toggle:hover {
+    background-color: #fef9e0;
+    background-image: none;
+    transition: background-color 0.2s;
+}
+
+#theme-toggle svg {
+    fill: var(--nav-text-color);
+}
+
+#theme-toggle svg:last-child {
+    display: none;
+}
+
+.dark-mode #theme-toggle svg:first-child {
+    display: none;
+}
+
+.dark-mode #theme-toggle svg:last-child {
+    display: block;
+}
+
+.nav-bar {
+    /* background-image: var(--nav-bar-color); */
+    background-color: var(--nav-bar-color);
+    /* margin: 0; */
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;    /* Aligns items in the flex box on the main-axis (horizontal) */
+    align-items: stretch;    /* Aligns items in the flex box on the cross-axis (vertical) */
+    position: sticky;    /* Keeps the navigation bar at the top of the screen when scrolling */
+    width: 100%;
+    top: 0;
+}
+
+.nav-center {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+}
+
+.nav-button {
+    display: inline-block;
+    /* background-image: linear-gradient(#436488, #2e435c); */
+    background-color: var(--nav-bar-color);
+    padding: 20px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 20px;
+    /* font-style: italic; */
+    text-align: center;
+    color: var(--nav-text-color);
+    transition: all 0.2s;
+}
+
+.nav-button.active {
+    font-style: normal;
+}
+
+.nav-button:link {
+    text-decoration: none;
+    color: var(--nav-text-color);
+}
+
+.nav-button:visited {
+    color: var(--nav-text-color);
+}
+
+.nav-button:hover {
+    background-image: none;
+    background-color: #fef9e0;
+    color: var(--nav-text-color);
+    cursor: pointer;
+}
+
+/* Makes sure that the dropdown container is positioned correctly */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Properties of the dropdown menu, starts off hidden */
+.dropdown-menu {
+    /* display: none; */
+    position: absolute;
+    background-color: var(--nav-bar-color);
+    min-width: 150px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+/* Makes the dropdown menu visible when cursor hovers over the dropdown container (i.e Misc. button) */
+.dropdown:hover .dropdown-menu {
+    /* display: block; */
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Styling for each button in the dropdown menu */
+.dropdown-menu a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    text-align: center;
+    color: var(--nav-text-color);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
+
+/* Change background color on hover of dropdown menu buttons  */
+.dropdown-menu a:hover {
+    background-color: #fef9e0;
+    cursor: pointer;
+}
+
+.text-img-container {
+    /* Just for labelling purposes */
+    color: var(--text-color);
+}
+
+.text-img-container img {
+    float: left;
+    min-width: 300px;
+    max-width: 600px;
+    padding: 0 1.25rem 0.25rem 0;
+}
+
+.image-container {
+    /* border: 5px solid white; */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+    /* margin-top: 2%; */
+    /* margin-bottom: 2%; */
+}
+
+.footer-bar {
+    background-image: var(--nav-bar-color);
+    /* background-color: #344e6a; */
+    /* margin: 15% 10% 10%; */
+    height: 70px;
+}
+
+.empty-space {
+    background-color: var(--bg-color);
+    height: 100px;
+}
+
+@media (max-width: 700px) {
+    .text-img-container img {
+        min-width: none;
+        width: 80%;
+    }
+}
+
+/*
+.wrapper {
+    padding: 0 14%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-around;
+    gap: 2rem;
+}
+
+.wrapper-image img {
+    width: 100%;
+    min-width: 300px;
+    max-width: 600px;
+    object-fit: cover;
+    vertical-align: middle;
+}
+
+.wrapper-text {
+    flex: 1;
+    min-width: 300px;
+    max-width: 100%;
+}
+
+.wrapper-text * {
+    margin: 0;
+}
