@@ -1,8 +1,8 @@
+//Ali Fareed 
+//Sarim Hamid
 //Syed Ahmed 
-//Sky Ye 
-//Dominic Botlero
 //Group Project 
-//ITEC 3020
+//ITEC 4020
 
 //Global Variable
 let info = null;
@@ -109,158 +109,9 @@ function newPassword (){
     } 
 }
 
-async function bookPost() {
-    let postEntered = await retrievePost(); 
-    
-    if (!postEntered) {
-        alert("Please fill all fields to create a post.");
-        return;
-    }
 
-    savePostToLocalStorage(postEntered); 
-    alert("Your blog has been created!");
-    document.getElementById('Posts').reset(); 
-}
+//FIXING --> Need a function for the forum of the books (possibly done in the server)
 
-function retrievePost() {
-    let postPage = document.getElementById("pp").value; 
-    let postTitle = document.getElementById("pt").value; 
-    let postMessage = document.getElementById("mg").value; 
-    let imageInput = document.getElementById("ig").files[0]; 
-
-    if (!postPage || !postTitle || !postMessage || !imageInput) {
-        return false;
-    }
-
-
-    let reader = new FileReader();
-    return new Promise((resolve) => {
-        reader.onload = function (e) {
-            resolve({
-                page: postPage,
-                title: postTitle,
-                message: postMessage,
-                image: e.target.result, 
-            });
-        };
-        reader.readAsDataURL(imageInput); 
-    });
-}
-
-function savePostToLocalStorage(postEntered) {
-    const categoryKeyMap = {
-        "Pride and Prejudice": "prideNPrejudice",
-        "Fantasy Lovers": "fantasyLovers",
-        "Mystery/Thriller": "mysteryThriller",
-    };
-
-    const categoryKey = categoryKeyMap[postEntered.page];
-    if (!categoryKey) {
-        alert("Invalid category selected.");
-        return;
-    }
-
-    let categoryPosts = JSON.parse(localStorage.getItem(categoryKey)) || [];
-    categoryPosts.push(postEntered);
-   
-    localStorage.setItem(categoryKey, JSON.stringify(categoryPosts));
-
-    let allPosts = JSON.parse(localStorage.getItem("post")) || [];
-    allPosts.push(postEntered);
-    localStorage.setItem("post", JSON.stringify(allPosts));
-}
-
-function displayContainer(categoryKey, containerSelector, heading) {
-    let posts = JSON.parse(localStorage.getItem(categoryKey)) || [];
-    let postContainer = document.querySelector(containerSelector);
-
-    if (!postContainer) return;
-
-    postContainer.innerHTML = `<h2>${heading}</h2>`; 
-
-    posts.forEach((post, index) => {
-        let postElement = document.createElement('div');
-        postElement.classList.add('discussion-item');
-        postElement.innerHTML = `
-            <h3>${post.title}</h3>
-            <p>${post.message}</p>
-            <img src="${post.image}" alt="Blog Image" style="width: 200px; height: auto;">
-            <div class="likes-section">
-                <button class="like-btn" data-index="${index}">Like</button>
-                <span class="like-count" id="like-count-${index}">${post.likes || 0} Likes</span>
-            </div>
-
-             <div class="instagram-links">
-                <a href="https://www.instagram.com/?hl=en" target="_blank">Share on Instagram</a>
-            </div>
-
-            <hr>
-        `;
-        postContainer.appendChild(postElement);
-    });
-
-    const likeBtn = document.querySelectorAll('.like-btn');
-    likeBtn.forEach((button) => {
-        button.addEventListener('click', function() {
-            const likeIndex = button.getAttribute('data-index');
-            let posts = JSON.parse(localStorage.getItem(categoryKey)) || [];
-
-            posts[likeIndex].likes = (posts[likeIndex].likes || 0) + 1;
-
-            localStorage.setItem(categoryKey, JSON.stringify(posts));
-
-            const likeCountElement = document.getElementById(`like-count-${likeIndex}`);
-            likeCountElement.textContent = `${posts[likeIndex].likes} Likes`;
-        });
-    });
-}
-
-function displayPride() {
-    displayContainer("prideNPrejudice", "#prideContainer", "Forum Posts");
-}
-
-function displayFantasy() {
-    displayContainer("fantasyLovers", "#fantasyContainer", "Forum Posts");
-}
-
-function displayMystery() {
-    displayContainer("mysteryThriller", "#mysteryContainer", "Forum Posts");
-}
-
-displayPride();
-displayFantasy();
-displayMystery();
-
-document.addEventListener("DOMContentLoaded", function() {
-    const starRatings = document.querySelectorAll('.star');
-    const userRating = document.getElementById('userRating');
-    
-    if (!userRating) return;
-
-    const userSavedRating = localStorage.getItem('bookrating');
-    if (userSavedRating) {
-        userRating.textContent = userSavedRating;
-        starRatings.forEach((star, index) => {
-            if (index < userSavedRating) {
-                star.classList.add('selected');
-            }
-        });
-    }
-
-    starRatings.forEach(star => {
-        star.addEventListener('click', function() {
-            let value = this.getAttribute('data-value');
-            userRating.textContent = value;
-
-            localStorage.setItem('bookrating', value);
-
-            starRatings.forEach(star => star.classList.remove('selected'));
-            for (let i = 0; i < value; i++) {
-                starRatings[i].classList.add('selected');
-            }
-        });
-    });
-});
 
 
 
