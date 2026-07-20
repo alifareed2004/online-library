@@ -7,48 +7,29 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const csv = require('csv-parser');
 
 const app = express();
 
 //Middleware to parse JSON
 app.use(express.json());
 
+//Serve the site's static files (html, css, js, images) from this same server
+app.use(express.static(__dirname));
+
 //PORT NUMBER
 const PORT = 9000
 
-//Array list for csv file 
+//Array list for csv file
 let books =[];
 
-//Readin Books.csv file into an array
-fs.readFile('books.csv', 'utf-8', (err, data) => {
-    if (err) throw err;
-    
-    //Converting the data into lines
-    const lines = data.split('\n');
+// Reading books.csv file into an array, this method handles the commas that are present in the dataset.
+fs.createReadStream('books.csv')
+    .pipe(csv())
+    .on('data', (book) => books.push(book))
+    .on('error', (err) => { throw err; });
 
-    //Creating a Header for the data 
-    const headers = lines[0].split(',');
 
-    //For every line create a book object
-    for (let i = 1; i < lines.length; i++){
-        //Skipping empty spaces
-        if (lines[i].trim() === '') 
-            continue;
-
-        const values = lines[i].split(',');
-        const book = {}
-
-        headers.forEach((header, index) => {
-            book[header] = values[index];
-        });
-
-        books.push(book);
-    }
-})
-
-//Books Page 
-//Searching a Book from the Database 
-//First Get all the books
 app.get('/books', (req,res) => {
     res.json(books);
 })
