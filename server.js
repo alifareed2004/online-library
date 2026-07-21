@@ -9,6 +9,8 @@ const fs = require('fs');
 const path = require('path');
 const csv = require('csv-parser');
 
+require('dotenv').config();
+
 const app = express();
 
 //Middleware to parse JSON
@@ -35,13 +37,24 @@ app.get('/books', (req,res) => {
 })
 
 
-//Adding a book
+//Agentic Approach
+//Get OpenAI API Key
+const {OpenAI} = require('openai');
+const openai = new OpenAI({
+    apiKey: process.env.OpenAI_API_Key,
+})
+
+//Creating new file for evaulation 
 
 
 
-//Random Book from the database
 
 
+
+
+
+
+//Listening on the PORT number 
 app.listen(PORT, () => 
      console.log(`Listening at http://localhost:${PORT}`)
  );
