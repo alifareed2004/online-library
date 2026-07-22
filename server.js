@@ -41,7 +41,7 @@ app.get('/books', (req,res) => {
 //Get OpenAI API Key
 const {OpenAI} = require('openai');
 const openai = new OpenAI({
-    apiKey: process.env.OpenAI_API_Key,
+    apiKey: process.env.OPENAI_API_KEY,
 })
 
 //Creating new file for evaulation 
