@@ -435,13 +435,15 @@ input[type="text"], input[type="password"] {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin: 20px 200px 0;
+    margin: 20px 14% 0;
 }
 
 .search-filter-bar #search-input {
     flex: 1;
     min-width: 200px;
+    height: 45px;
     padding: 12px 15px;
+    margin-top: 0;
     border: none;
     background: #f1f1f1;
     color: #1C1C1C;
@@ -450,6 +452,8 @@ input[type="text"], input[type="password"] {
 
 .search-filter-bar #category-filter {
     padding: 12px 15px;
+    margin-top: 0;
+    height: 45px;
     border: none;
     background: #f1f1f1;
     color: #1C1C1C;
@@ -458,7 +462,9 @@ input[type="text"], input[type="password"] {
 
 .search-filter-bar .submit_btn {
     width: auto;
+    height: 45px;
     padding: 12px 24px;
+    margin-top: 0;
 }
 
 /* Book details window */
