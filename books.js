@@ -44,6 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchInput) {
         searchInput.addEventListener('input', debounce(applyFilters, 250));
     }
+
+    setupWindow();
 });
 
 // Goes through each book to create categories list for dropdown 
@@ -86,7 +88,7 @@ function applyFilters() {
 }
 
 // displays the books and handles the logic for pagnation
-function displayPage(page) {
+function displayPage(page, shouldScroll = false) {
     const totalPages = Math.max(1, Math.ceil(filteredBooks.length / BOOKS_PER_PAGE));
     currentPage = Math.min(Math.max(1, page), totalPages);
 
@@ -96,7 +98,9 @@ function displayPage(page) {
     displayBooks(pageBooks);
     displayPagination(totalPages);
 
-    document.getElementById('books-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (shouldScroll) {
+        document.getElementById('books-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 function displayBooks(books) {
@@ -114,6 +118,9 @@ function displayBooks(books) {
 function createBookCard(book) {
     const card = document.createElement('div');
     card.className = 'book-card';
+    card.tabIndex = 0;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', `View details for ${book.title || 'Untitled'}`);
 
     const authors = (book.authors || 'Unknown Author').split(';').join(', ');
     const year = book.published_year ? book.published_year : '';
@@ -132,7 +139,81 @@ function createBookCard(book) {
         </div>
     `;
 
+    card.addEventListener('click', () => openBookWindow(book));
+    card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openBookWindow(book);
+        }
+    });
+
     return card;
+}
+
+// Sets up the window's close interactions (close button, backdrop click, Escape key)
+function setupWindow() {
+    const windowEl = document.getElementById('book-window');
+    const closeBtn = document.getElementById('window-close');
+    if (!windowEl || !closeBtn) return;
+
+    closeBtn.addEventListener('click', closeBookWindow);
+    windowEl.addEventListener('click', (e) => {
+        if (e.target === windowEl) closeBookWindow();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !windowEl.classList.contains('hidden')) closeBookWindow();
+    });
+}
+
+// Escapes HTML so book data can't break out of the markup we build
+function escapeHtml(value) {
+    const div = document.createElement('div');
+    div.textContent = value ?? '';
+    return div.innerHTML;
+}
+
+function openBookWindow(book) {
+    const windowEl = document.getElementById('book-window');
+    const windowBody = document.getElementById('window-body');
+    if (!windowEl || !windowBody) return;
+
+    const authors = (book.authors || 'Unknown Author').split(';').join(', ');
+    const categories = (book.categories || '').split(';').map((c) => c.trim()).filter(Boolean).join(', ');
+    const year = book.published_year ? book.published_year : '';
+    const rating = book.average_rating ? `⭐ ${book.average_rating}` : '';
+    const pages = book.num_pages ? `${book.num_pages} pages` : '';
+    const ratingsCount = book.ratings_count ? `${Number(book.ratings_count).toLocaleString()} ratings` : '';
+    const description = book.description || 'No description available.';
+
+    const metaLine = [year, rating, pages, ratingsCount].filter(Boolean).join(' &middot; ');
+
+    windowBody.innerHTML = `
+        <div class="window-book">
+            <div class="window-book-cover">
+                ${book.thumbnail
+                    ? `<img src="${book.thumbnail}" alt="Cover of ${escapeHtml(book.title)}" onerror="this.outerHTML='<div class=&quot;book-cover-placeholder&quot;>No Cover</div>'">`
+                    : '<div class="book-cover-placeholder">No Cover</div>'}
+            </div>
+            <div class="window-book-info">
+                <h2 class="window-book-title">${escapeHtml(book.title || 'Untitled')}</h2>
+                ${book.subtitle ? `<p class="window-book-subtitle">${escapeHtml(book.subtitle)}</p>` : ''}
+                <p class="window-book-authors">${escapeHtml(authors)}</p>
+                ${categories ? `<p class="window-book-categories">${escapeHtml(categories)}</p>` : ''}
+                ${metaLine ? `<p class="window-book-meta">${metaLine}</p>` : ''}
+                <p class="window-book-description">${escapeHtml(description)}</p>
+            </div>
+        </div>
+    `;
+
+    windowEl.classList.remove('hidden');
+    document.body.classList.add('window-open');
+}
+
+function closeBookWindow() {
+    const windowEl = document.getElementById('book-window');
+    if (!windowEl) return;
+    windowEl.classList.add('hidden');
+    document.body.classList.remove('window-open');
 }
 
 // displays the pagination btns as well as handles the logic for the btns
@@ -145,7 +226,7 @@ function displayPagination(totalPages) {
     const prevBtn = document.createElement('button');
     prevBtn.textContent = 'Previous';
     prevBtn.disabled = currentPage === 1;
-    prevBtn.addEventListener('click', () => displayPage(currentPage - 1));
+    prevBtn.addEventListener('click', () => displayPage(currentPage - 1, true));
     controls.appendChild(prevBtn);
 
     const status = document.createElement('span');
@@ -156,7 +237,7 @@ function displayPagination(totalPages) {
     const nextBtn = document.createElement('button');
     nextBtn.textContent = 'Next';
     nextBtn.disabled = currentPage === totalPages;
-    nextBtn.addEventListener('click', () => displayPage(currentPage + 1));
+    nextBtn.addEventListener('click', () => displayPage(currentPage + 1, true));
     controls.appendChild(nextBtn);
 }
 
