@@ -10,6 +10,9 @@ let allBooks = [];
 let filteredBooks = [];
 let currentPage = 1;
 
+// Minimum number of ratings a book needs before it's eligible for rating-based sort, can change as well
+const MIN_RATINGS_COUNT_FOR_SORT = 50;
+
 // get book data from server and set up search and filter functions
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('books-container');
@@ -31,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('book-search-form');
     const searchInput = document.getElementById('search-input');
     const categoryFilter = document.getElementById('category-filter');
+    const sortFilter = document.getElementById('sort-filter');
 
     if (form) {
         form.addEventListener('submit', (e) => {
@@ -43,6 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (searchInput) {
         searchInput.addEventListener('input', debounce(applyFilters, 250));
+    }
+    if (sortFilter) {
+        sortFilter.addEventListener('change', applyFilters);
     }
 
     setupWindow();
@@ -72,6 +79,7 @@ function populateCategoryFilter(books) {
 function applyFilters() {
     const searchTerm = (document.getElementById('search-input').value || '').trim().toLowerCase();
     const selectedCategory = document.getElementById('category-filter').value;
+    const sortOrder = document.getElementById('sort-filter').value;
 
     filteredBooks = allBooks.filter((book) => {
         const matchesSearch = !searchTerm
@@ -83,6 +91,13 @@ function applyFilters() {
 
         return matchesSearch && matchesCategory;
     });
+
+    if (sortOrder === 'rating-desc' || sortOrder === 'rating-asc') {
+        //Exclude books with no rating instead of treating missing data as a 0
+        filteredBooks = filteredBooks.filter((book) => book.average_rating !== undefined && book.average_rating !== '' && !isNaN(Number(book.average_rating)));
+        const direction = sortOrder === 'rating-desc' ? -1 : 1;
+        filteredBooks.sort((a, b) => direction * (Number(a.average_rating) - Number(b.average_rating)));
+    }
 
     displayPage(1);
 }
@@ -150,7 +165,7 @@ function createBookCard(book) {
     return card;
 }
 
-// Sets up the window's close interactions (close button, backdrop click, Escape key)
+// Close the book window when clicking outside the content or pressing Esc
 function setupWindow() {
     const windowEl = document.getElementById('book-window');
     const closeBtn = document.getElementById('window-close');
