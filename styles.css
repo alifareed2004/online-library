@@ -395,6 +395,14 @@ input[type="text"], input[type="password"] {
     margin: 0;
 }
 
+.book-genre {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    color: var(--text-color);
+    font-weight: 600;
+    margin: 0;
+}
+
 .pagination {
     display: flex;
     justify-content: center;
