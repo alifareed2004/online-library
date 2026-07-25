@@ -1,8 +1,33 @@
-//js for the chatbot(TEST)
+//js for the chatbot
 //Variables
 const askForm = document.getElementById('askAi') 
 const input = document.getElementById('ask-input')
 const output = document.getElementById('Ai-output-container');
+
+//Format the Markdown/Linebreaks and convert to HTML
+function formatAI(text){
+    const div = document.createElement('div');
+    //Escape from any special characters from markdown/linebreaks
+    div.textContent = text || '';
+
+    //Convert the escaped markdown/linebreaks to HTML
+    return div.innerHTML
+        .replace(/(?:^|\s)(\d{1,2}\.\s+)/g, '<br>$1').replace(/^<br>/, '')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+}
+
+
+//Function used to help have a clean output, format Markdown/Linebreaks, and add chat history in the html 
+function sendMessage (sender, text) {
+    const formatText = formatAI(text);
+
+    const p = document.createElement('p');
+    p.innerHTML = `<strong>${sender}:</strong> ${formatText}`;
+    output.appendChild(p);
+
+}
+
 
 //Event Listener for the form 
 askForm.addEventListener('submit', async (e) => {
@@ -13,15 +38,15 @@ askForm.addEventListener('submit', async (e) => {
     if (!prompt) return;
 
     //Clear the input after sent 
-    prompt.value ='';
+    input.value ='';
 
     //Displaying the input of the user
-    output.innerHTML = '<p>You: ' +prompt+ '</p><br>';
+    sendMessage('You', prompt);
 
     //Calling the server using fetch, while awaiting for the response
     const res = await fetch('/ask-Ai', {
         method: 'POST',
-        headers: {'Content-type' : 'application/json' },
+        headers: {'Content-Type' : 'application/json' },
         body: JSON.stringify({prompt : prompt}),
     });
 
@@ -30,9 +55,10 @@ askForm.addEventListener('submit', async (e) => {
 
     //Displaying the output of the AI
     if(res.ok){
-        output.innerHTML = '<p>AI: ' +data.reply + '</p>';
+        sendMessage('AI', data.reply);
     } else {
-        output.innerHTML = '<p>AI: Error getting a response.</p>'; 
+        //Error message
+        sendMessage('AI', 'Error getting a response.');
     }
 });
 
