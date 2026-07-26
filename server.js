@@ -40,7 +40,6 @@ app.get('/books', (req,res) => {
 //Agentic Approach
 //Get OpenAI API Key
 const {OpenAI} = require('openai');
-const { createArrayCsvWriter, createObjectCsvWriter } = require('csv-writer');
 const openai = new OpenAI({
     apiKey: process.env.OpenAI_API_Key,
 })
