@@ -32,7 +32,7 @@ function sendMessage (sender, text) {
 //Event Listener for the form 
 askForm.addEventListener('submit', async (e) => {
     //Stoping the page from refreshing 
-    e.preventDefault();
+    e.preventDefault(); 
     
     const prompt = input.value.trim();
     if (!prompt) return;

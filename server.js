@@ -8,6 +8,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const csv = require('csv-parser');
+const csvWriter = require('csv-writer').createObjectCsvWriter;
 
 require('dotenv').config();
 
@@ -39,6 +40,7 @@ app.get('/books', (req,res) => {
 //Agentic Approach
 //Get OpenAI API Key
 const {OpenAI} = require('openai');
+const { createArrayCsvWriter, createObjectCsvWriter } = require('csv-writer');
 const openai = new OpenAI({
     apiKey: process.env.OpenAI_API_Key,
 })
@@ -95,9 +97,25 @@ function searchBooks (keyword = '', category = '', min_rating = 0, sort = '', li
         return match.slice(0, limit);
 }
 
+//Initialize CSV writer 
+const evaluationCsv = csvWriter({
+    path: path.join(__dirname, 'Evaluation_Accuracy.csv'), 
+    header: [
+        { id: 'question', title:'Questions'},
+        { id: 'response', title: 'OpenAI Response'},
+        { id: 'time', title: 'Time Taken'}
+    ],
+    //Appends new evaluation rows without overwriting exisiting file 
+    append:true
+});
+
+
 //Allow user requests to approach the AI for assistants 
 app.post('/ask-Ai', async (req,res) => {
-   try {
+    //Start Time of the timer for evaulation 
+    const startTime = Date.now();
+
+    try {
     const {prompt} = req.body;
 
     const messages = [
@@ -161,6 +179,18 @@ const toolCalls = [];
         });
         message = response.choices[0].message;
     }  
+
+    //EndTime for the timer for evaluation
+    const endTime = Date.now();
+    //totaltime and convert milliseconds to seconds 
+    const totalTime = ((endTime - startTime)/1000).toFixed(2);
+
+    //Save data into the csv file 
+    await evaluationCsv.writeRecords([{
+        question : prompt,
+        response : message.content,
+        time : totalTime
+    }]);
 
     //To display its reply
     res.json({reply: message.content, toolCalls});
