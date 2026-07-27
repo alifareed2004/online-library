@@ -23,26 +23,6 @@ function normalizeCategory(value) {
         .filter((item) => item);
 }
 
-// Finds the most common genres from the list of books
-function getTopGenres(books, maxGenres = 12) {
-    const counts = {};
-
-    books.forEach((book) => {
-        normalizeCategory(book.categories).forEach((category) => {
-            if (counts[category]) {
-                counts[category]++;
-            } else {
-                counts[category] = 1;
-            }
-        });
-    });
-
-    return Object.entries(counts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, maxGenres)
-        .map((item) => item[0]);
-}
-
 // Groups books together based on their genre
 function getBooksByGenre(books) {
     const byGenre = {};
@@ -66,19 +46,6 @@ function pickRandom(array) {
     if (!array || array.length === 0) return null;
 
     return array[Math.floor(Math.random() * array.length)];
-}
-
-// Randomly selects a set number of different genres
-function chooseGenres(availableGenres, count = 4) {
-    const options = [...availableGenres];
-    const chosen = [];
-
-    while (chosen.length < count && options.length > 0) {
-        const index = Math.floor(Math.random() * options.length);
-        chosen.push(options.splice(index, 1)[0]);
-    }
-
-    return chosen;
 }
 
 // Creates and displays the recommendation cards on the webpage
